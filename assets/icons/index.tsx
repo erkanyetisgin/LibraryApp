@@ -9,6 +9,8 @@ const icons = {
     mail: Icons.Mail,
     password: Icons.Password,
     user: Icons.User,
+    pen: Icons.Pen,
+    book: Icons.Book,
 }
 
 interface IconProps {

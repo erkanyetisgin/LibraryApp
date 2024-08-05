@@ -25,10 +25,10 @@ const MainLayout = () => {
       if (session?.user) {
         setAuth(session?.user)
         updateUserData(session?.user)
-        router.replace('/home' as unknown as Href<string | object>);
+        router.replace('profile' as unknown as Href<string | object>);
       } else {
         setAuth(null)
-        router.replace('/welcome' as unknown as Href<string | object>);
+        router.replace('welcome' as unknown as Href<string | object>);
       }
     })
   },[])
@@ -42,11 +42,9 @@ const MainLayout = () => {
   }
 
   return (
-    <Stack
-    screenOptions={{
-      headerShown: false,
-    }}
-    />
+    <Stack>
+      <Stack.Screen name="(main)" options={{headerShown: false}} />
+    </Stack>
   )
 }
 
