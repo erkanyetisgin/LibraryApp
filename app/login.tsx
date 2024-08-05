@@ -9,18 +9,35 @@ import BackButton from '@/components/BackButton';
 import { hp, wp } from '@/helpers/common';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
+import { supabase } from '@/lib/supabase';
 
 const Login = () => {
     const router = useRouter();
     const emailRef = useRef("");
     const passwordRef = useRef("");
     const [loading, setLoading] = useState(false);
-    const onSubmit = () => {
+
+    const onSubmit =async () => {
         if (!emailRef.current || !passwordRef.current) {
             Alert.alert('Giriş Yapılamadı', 'Lütfen tüm alanları doldurunuz');
             return;
         }
-    
+
+        let email = emailRef.current.trim();
+        let password = passwordRef.current.trim();
+
+        setLoading(true);
+        const {error} = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        setLoading(false);
+
+        console.log(error);
+        if (error) {
+            Alert.alert('Giriş Yapılamadı', error.message);
+        }
     }
 
     return (
@@ -43,6 +60,7 @@ const Login = () => {
                     <Input
                         icon={<Icon name='password' size={26} strokeWidth={1.6} colors={theme.colors.text} />} 
                         placeholder='Şifre'
+                        secureTextEntry
                         onChangeText={value => passwordRef.current = value}
                     />
 
@@ -50,7 +68,7 @@ const Login = () => {
                 </View>
                 <View style={styles.footer}>
                     <Text style={styles.footerText}> Hesabın yok mu ?</Text>
-                    <Pressable>
+                    <Pressable onPress={()=>router.push('/signUp')}>
                         <Text style={[styles.footerText, { color: theme.colors.primaryDark, fontWeight: '600' }]}>Kayıt Ol</Text>
                     </Pressable>
                     </View>

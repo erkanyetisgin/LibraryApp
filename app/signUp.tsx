@@ -9,6 +9,7 @@ import BackButton from '@/components/BackButton';
 import { hp, wp } from '@/helpers/common';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
+import { supabase } from '@/lib/supabase';
 
 const signUp = () => {
     const router = useRouter();
@@ -16,10 +17,31 @@ const signUp = () => {
     const passwordRef = useRef("");
     const nameRef = useRef("");
     const [loading, setLoading] = useState(false);
-    const onSubmit = () => {
+    const onSubmit = async () => {
         if (!emailRef.current || !passwordRef.current) {
             Alert.alert('Kayıt Yapılamadı', 'Lütfen tüm alanları doldurunuz');
             return;
+        }
+
+        let name = nameRef.current.trim();
+        let email = emailRef.current.trim();
+        let password = passwordRef.current.trim();
+
+        setLoading(true);
+
+        const { data: {session}, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { name,email },
+            },
+
+        });
+
+        setLoading(false);
+
+        if (error) {
+            Alert.alert('Kayıt Yapılamadı', error.message);
         }
     
     }
@@ -50,6 +72,7 @@ const signUp = () => {
                     <Input
                         icon={<Icon name='password' size={26} strokeWidth={1.6} colors={theme.colors.text} />} 
                         placeholder='Şifre'
+                        secureTextEntry
                         onChangeText={value => passwordRef.current = value}
                     />
 
