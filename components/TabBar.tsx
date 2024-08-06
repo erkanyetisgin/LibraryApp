@@ -8,7 +8,7 @@ import { theme } from '@/constants/theme';
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const icon: { [key: string]: (props: any) => JSX.Element } = {
-        index: (props: any) =>  <Icon name='home' size={25} colors={ '#000000'} {...props} />,
+        home: (props: any) =>  <Icon name='home' size={25} colors={ '#000000'} {...props} />,
         books: (props: any) =>  <Icon name='book' size={25} colors={ '#000000'} {...props} />,
         authors: (props: any) =>  <Icon name='pen' size={25} colors={ '#000000'} {...props} />,
         profile: (props: any) =>  <Icon name='user' size={25} colors={ '#000000'} {...props} />,

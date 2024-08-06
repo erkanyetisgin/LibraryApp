@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const Page = () => {
+const home = () => {
   return (
     <View style={styles.container}>
       <Text>Home</Text>
@@ -9,7 +9,7 @@ const Page = () => {
   )
 }
 
-export default Page
+export default home
 
 const styles = StyleSheet.create({
     container: {
