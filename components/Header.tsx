@@ -1,30 +1,39 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from '@/assets/icons';
-import { useRouter } from 'expo-router';
 
-const Header = ({title}: {title: string}) => {
-  const router = useRouter();
-  const navigation = useNavigation();
+const Header = ({ title, setSearchQuery }: { title: string, setSearchQuery: (query: string) => void }) => {
   const [searchActive, setSearchActive] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
+  const handleSearch = (query: string) => {
+    setSearchInput(query);
+    setSearchQuery(query);
+  };
+
+  const toggleSearch = () => {
+    if (searchActive) {
+      setSearchInput('');
+      setSearchQuery(''); 
+    }
+    setSearchActive(!searchActive);
+  };
 
   return (
     <View style={styles.header}>
-
       {searchActive ? (
         <TextInput
           style={styles.searchInput}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Search..."
+          value={searchInput}
+          onChangeText={handleSearch}
+          placeholder="Ara..."
           autoFocus
         />
       ) : (
-        <Text style={styles.title}> {title} </Text>
+        <Text style={styles.title}>{title}</Text>
       )}
-      <TouchableOpacity onPress={() => setSearchActive(!searchActive)}>
+      
+      <TouchableOpacity onPress={toggleSearch}>
         <Icon name="search" size={24} colors="black" />
       </TouchableOpacity>
     </View>

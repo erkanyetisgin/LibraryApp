@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import { hp } from '@/helpers/common';
 
 const books = () => {
+  const [searchQuery, setSearchQuery] = useState('');
   return (
     <View style={styles.container}>
-      <Header title='Kitaplar'/>
+      <Header title="Kitaplar" setSearchQuery={setSearchQuery} />
       <View style={styles.content}>
         <Text>Books</Text>
         <TouchableOpacity

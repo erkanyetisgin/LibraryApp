@@ -1,32 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Pressable, TouchableOpacity } from 'react-native';
 import Header from '@/components/Header';
 import { hp } from '@/helpers/common';
 import { supabase } from '../../lib/supabase';
+import AuthorBooksModal from './booksList'; 
+import AddAuthorModal from './addAuthor';
 
 const Authors = () => {
   const [authors, setAuthors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAuthor, setSelectedAuthor] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [addAuthorModalVisible, setAddAuthorModalVisible] = useState(false);
+
+  const fetchAuthors = async () => {
+    let query = supabase.from('authors').select('*');
+
+    if (searchQuery) {
+      query = query.ilike('name', `%${searchQuery}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching authors:', error);
+    } else {
+      const updatedAuthors = await Promise.all(
+        data.map(async (author) => {
+          const imageUrl = await fetchAuthorImage(author.name);
+          return { ...author, imageUrl };
+        })
+      );
+      setAuthors(updatedAuthors);
+    }
+    setLoading(false);
+  };
+
+  const handleAddAuthor = async (authorName: string) => {
+    const { data, error } = await supabase.from('authors').insert([{ name: authorName }]);
+  
+    if (error) {
+      console.error('Error adding author:', error);
+    } else {
+        fetchAuthors();
+      
+    }
+  };
+  
 
   useEffect(() => {
-    const fetchAuthors = async () => {
-      const { data, error } = await supabase.from('authors').select('*');
-      if (error) {
-        console.error('Error fetching authors:', error);
-      } else {
-        const authorsWithImages = await Promise.all(
-          data.map(async (author: any) => {
-            const imageUrl = await fetchAuthorImage(author.name);
-            return { ...author, imageUrl };
-          })
-        );
-        setAuthors(authorsWithImages);
-      }
-      setLoading(false);
-    };
-
     fetchAuthors();
-  }, []);
+  }, [searchQuery]);
 
   const fetchAuthorImage = async (authorName: string) => {
     const response = await fetch(`https://openlibrary.org/search/authors.json?q=${authorName}`);
@@ -39,8 +64,19 @@ const Authors = () => {
     return null;
   };
 
+  const handleAuthorPress = (author: any) => {
+    setSelectedAuthor(author);
+    setModalVisible(true);
+  };
+
   const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.authorItem}>
+    <Pressable
+      onPress={() => handleAuthorPress(item)}
+      style={({ pressed }) => [
+        styles.authorItem,
+        { backgroundColor: pressed ? '#e0e0e0' : '#fff' }, 
+      ]}
+    >
       {item.imageUrl ? (
         <Image source={{ uri: item.imageUrl }} style={styles.authorImage} />
       ) : (
@@ -49,15 +85,15 @@ const Authors = () => {
         </View>
       )}
       <Text style={styles.authorName}>{item.name}</Text>
-    </View>
+    </Pressable>
   );
 
   return (
     <View style={styles.container}>
-      <Header title="Yazarlar" />
+      <Header title="Yazarlar" setSearchQuery={setSearchQuery} />
       <View style={styles.content}>
         {loading ? (
-          <Text>Loading...</Text>
+          <Text>Yükleniyor...</Text>
         ) : (
           <FlatList
             data={authors}
@@ -67,13 +103,24 @@ const Authors = () => {
           />
         )}
       </View>
+      <AuthorBooksModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        selectedAuthor={selectedAuthor}
+        authorId={selectedAuthor?.id || null}
+      />
       <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-          }}
-        >
-          <Text style={styles.buttonText}>+</Text>
-        </TouchableOpacity>
+        style={styles.button}
+        onPress={() => setAddAuthorModalVisible(true)}
+      >
+        <Text style={styles.buttonText}>+</Text>
+      </TouchableOpacity>
+      
+      <AddAuthorModal
+        visible={addAuthorModalVisible}
+        onClose={() => setAddAuthorModalVisible(false)}
+        onAddAuthor={handleAddAuthor}
+      />
     </View>
   );
 };
@@ -129,7 +176,7 @@ const styles = StyleSheet.create({
   },
   button: {
     position: 'absolute',
-    right: hp(2),
+    right: hp(2), 
     bottom: hp(17),
     width: hp(7),
     height: hp(7),
@@ -137,8 +184,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#6495ED',
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 5,
-    shadowColor: '#000',
+    elevation: 5, 
+    shadowColor: '#000', 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
