@@ -12,13 +12,12 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         profile: (props: any) =>  <Icon name='user' size={25} colors={ '#000000'} {...props} />,
     };
 
-    // TabBar'da görünmesini istediğiniz ekranları burada belirleyin.
     const visibleTabs = ['home', 'books', 'authors', 'profile'];
 
     return (
     <View style={styles.tabbar}>
       {state.routes
-        .filter(route => visibleTabs.includes(route.name)) // Sadece belirli ekranları göster
+        .filter(route => visibleTabs.includes(route.name))
         .map((route, index) => {
           const { options } = descriptors[route.key];
           const label: any = options.tabBarLabel !== undefined ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
