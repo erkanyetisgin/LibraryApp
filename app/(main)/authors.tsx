@@ -1,29 +1,33 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
+import Header from '@/components/Header';
 import { hp } from '@/helpers/common';
 
-const authors = () => {
-  const navigation = useNavigation();
-
+const Authors = () => {
   return (
     <View style={styles.container}>
-      <Text>Authors</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-        }}
-      >
-        <Text style={styles.buttonText}>+</Text>
-      </TouchableOpacity>
+      <Header  title='Yazarlar'/>
+      <View style={styles.content}>
+        <Text>Authors</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+          }}
+        >
+          <Text style={styles.buttonText}>+</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-export default authors;
+export default Authors;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
