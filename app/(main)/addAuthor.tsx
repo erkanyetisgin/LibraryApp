@@ -28,7 +28,7 @@ const AddAuthorModal = ({ visible, onClose, onAddAuthor }: { visible: boolean, o
             style={{ borderBottomWidth: 1, marginBottom: 20, fontSize: 18 }}
           />
           <TouchableOpacity onPress={handleAddAuthor} style={{ backgroundColor: '#6495ED', padding: 10, borderRadius: 5 }}>
-            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 18 }}>Ekle</Text>
+            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 18 }}>Yazar Ekle</Text>
           </TouchableOpacity>
         </View>
       </View>

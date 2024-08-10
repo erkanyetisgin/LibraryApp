@@ -78,7 +78,7 @@ const Authors = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Yazarlar" setSearchQuery={setSearchQuery} />
+      <Header title="Yazarlar" setSearchQuery={setSearchQuery} showSearch={true}/>
       <View style={styles.content}>
         {isLoading ? (
           <Text>Yükleniyor...</Text>

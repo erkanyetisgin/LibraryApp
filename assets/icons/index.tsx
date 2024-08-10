@@ -11,7 +11,9 @@ const icons = {
     user: Icons.User,
     pen: Icons.Pen,
     book: Icons.Book,
-    search: Icons.Search
+    search: Icons.Search,
+    filter: Icons.Filter,
+    sort : Icons.Sort,
 }
 
 interface IconProps {

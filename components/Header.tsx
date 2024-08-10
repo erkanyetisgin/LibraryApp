@@ -2,7 +2,25 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import Icon from '@/assets/icons';
 
-const Header = ({ title, setSearchQuery }: { title: string, setSearchQuery: (query: string) => void }) => {
+interface HeaderProps {
+  title: string;
+  setSearchQuery: (query: string) => void;
+  onFilterPress?: () => void;
+  onSortPress?: () => void;
+  showFilter?: boolean;
+  showSort?: boolean;
+  showSearch?: boolean;
+}
+
+const Header = ({
+  title,
+  setSearchQuery,
+  onFilterPress,
+  onSortPress,
+  showSearch = false,
+  showFilter = false,
+  showSort = false,
+}: HeaderProps) => {
   const [searchActive, setSearchActive] = useState(false);
   const [searchInput, setSearchInput] = useState('');
 
@@ -33,9 +51,23 @@ const Header = ({ title, setSearchQuery }: { title: string, setSearchQuery: (que
         <Text style={styles.title}>{title}</Text>
       )}
       
-      <TouchableOpacity onPress={toggleSearch}>
-        <Icon name="search" size={24} colors="black" />
-      </TouchableOpacity>
+      <View style={styles.actions}>
+        {showSearch && (
+          <TouchableOpacity onPress={toggleSearch} style={styles.icon}>
+            <Icon name="search" size={24} colors="black" />
+          </TouchableOpacity>
+        )}
+        {showFilter && (
+          <TouchableOpacity onPress={onFilterPress} style={styles.icon}>
+            <Icon name="filter" size={24} colors="black" />
+          </TouchableOpacity>
+        )}
+        {showSort && (
+          <TouchableOpacity onPress={onSortPress}style={styles.icon}>
+            <Icon name="sort" size={24} colors="black"  />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
@@ -68,5 +100,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    marginLeft: 15,
   },
 });
