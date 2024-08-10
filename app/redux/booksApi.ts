@@ -17,8 +17,15 @@ export const booksApi = createApi({
       query: (searchQuery) => ({
         url: 'books',
         params: {
-          title: `ilike.%${searchQuery}%`,
+          or: `(title.ilike.%${searchQuery}%,isbn.ilike.%${searchQuery}%)`,
         },
+      }),
+    }),
+    getBooksWithAuthors: builder.query({
+      query: (searchQuery) => ({
+        url: 'rpc/get_books_with_authors',
+        method: 'POST',
+        body: { search_query: searchQuery }, 
       }),
     }),
     getAuthors: builder.query({
@@ -60,6 +67,7 @@ export const booksApi = createApi({
 
 export const {
   useGetBooksQuery,
+  useGetBooksWithAuthorsQuery,
   useGetAuthorsQuery,
   useAddBookMutation,
   useAddBookAuthorMutation,

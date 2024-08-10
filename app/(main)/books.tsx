@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import { useGetBooksQuery } from '../redux/booksApi';
+import { useGetBooksWithAuthorsQuery } from '../redux/booksApi'; 
 import { hp } from '@/helpers/common';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
 import { ParamListBase, useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const Books = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: books, error, isLoading, refetch } = useGetBooksQuery(searchQuery);
+  const { data: books, error, isLoading, refetch } = useGetBooksWithAuthorsQuery(searchQuery);
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   const renderItem = ({ item }: { item: any }) => (
@@ -18,9 +18,9 @@ const Books = () => {
         style={styles.bookImage} 
       />
       <View style={styles.bookInfo}>
-        <Text  style={styles.bookTitle}>{item.title}</Text>
-        <Text>{item.author}</Text>
-        <Text>ISBN :{item.isbn}</Text>
+        <Text style={styles.bookTitle}>{item.title}</Text>
+        <Text>Yazar: {item.author_names}</Text> 
+        <Text>ISBN: {item.isbn}</Text>
         <Text>Tür: {item.genre}</Text>
       </View>
     </View>
@@ -49,7 +49,7 @@ const Books = () => {
         ) : (
           <FlatList
             data={books}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.book_id.toString()} 
             renderItem={renderItem}
           />
         )}
