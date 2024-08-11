@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
 import React, { useState } from 'react';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Image, Pressable } from 'react-native';
 import Header from '@/components/Header';
 import { useGetBooksWithAuthorsQuery } from '../redux/booksApi'; 
 import { hp } from '@/helpers/common';
@@ -8,23 +8,45 @@ import { ParamListBase, useNavigation, useFocusEffect } from '@react-navigation/
 
 const Books = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: books, error, isLoading, refetch } = useGetBooksWithAuthorsQuery(searchQuery);
+  const [sortType, setSortType] = useState('name_asc');
+  const { data: books, error, isLoading, refetch } = useGetBooksWithAuthorsQuery({
+    searchQuery: searchQuery || '',
+    sortBy: sortType.includes('name') ? 'title' : 'created_at',
+    sortDirection: sortType.includes('_asc') ? 'asc' : 'desc',
+});
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
+  const sortedBooks = () => {
+    if (!books) return [];
+  
+    return books.slice().sort((a: any, b: any) => {
+      if (sortType === 'name_asc') {
+        return a.title.localeCompare(b.title);
+      } else if (sortType === 'name_desc') {
+        return b.title.localeCompare(a.title);
+      } else if (sortType === 'date_asc') {
+        return new Date(a.published_date || 0).getTime() - new Date(b.created_at || 0).getTime();
+      } else if (sortType === 'date_desc') {
+        return new Date(b.published_date || 0).getTime() - new Date(a.created_at || 0).getTime();
+      }
+      return 0;
+    });
+  };
+
   const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.bookItem}>
-      <Image
-        source={{ uri: item.coverimage }} 
-        style={styles.bookImage} 
-      />
-      <View style={styles.bookInfo}>
-        <Text style={styles.bookTitle}>{item.title}</Text>
-        <Text>Yazar: {item.author_names}</Text> 
-        <Text>ISBN: {item.isbn}</Text>
-        <Text>Tür: {item.genre}</Text>
+    <Pressable onPress={() => navigation.navigate('bookDetail', { book: item })}>
+      <View style={styles.bookItem}>
+        <Image source={{ uri: item.coverimage }} style={styles.bookImage} />
+        <View style={styles.bookInfo}>
+          <Text style={styles.bookTitle}>{item.title}</Text>
+          <Text>Yazar: {item.author_names}</Text>
+          <Text>ISBN: {item.isbn}</Text>
+          <Text>Tür: {item.genre}</Text>
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
+  
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,15 +62,16 @@ const Books = () => {
         showSearch={true}
         showFilter={true} 
         showSort={true} 
+        onSortPress={(type: string) => setSortType(type)} 
       />
       <View style={styles.content}>
         {isLoading ? (
           <Text>Yükleniyor...</Text>
         ) : error ? (
-          <Text>Hata: {error.toString()}</Text>
+          <Text>Hata: {JSON.stringify(error)}</Text>
         ) : (
           <FlatList
-            data={books}
+            data={sortedBooks()}
             keyExtractor={(item) => item.book_id.toString()} 
             renderItem={renderItem}
           />
@@ -63,6 +86,7 @@ const Books = () => {
     </View>
   );
 };
+
 
 export default Books;
 

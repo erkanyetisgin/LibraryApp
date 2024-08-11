@@ -1,5 +1,3 @@
-// booksApi.ts
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { baseUrl, supabaseAnonKey } from '@/constants/index';
 
@@ -22,10 +20,14 @@ export const booksApi = createApi({
       }),
     }),
     getBooksWithAuthors: builder.query({
-      query: (searchQuery) => ({
+      query: ({ searchQuery, sortBy, sortDirection }) => ({
         url: 'rpc/get_books_with_authors',
         method: 'POST',
-        body: { search_query: searchQuery }, 
+        body: { 
+          search_query: searchQuery,
+          sort_by: sortBy, 
+          sort_direction: sortDirection 
+        },
       }),
     }),
     getAuthors: builder.query({
@@ -46,6 +48,13 @@ export const booksApi = createApi({
         url: 'bookauthors',
         method: 'POST',
         body: bookAuthor,
+      }),
+    }),
+    addUserBook: builder.mutation({
+      query: ({ userId, bookId }) => ({
+        url: 'usersbooks',
+        method: 'POST',
+        body: { user_id: userId, book_id: bookId },
       }),
     }),
       
@@ -73,4 +82,5 @@ export const {
   useAddBookAuthorMutation,
   useUpdateBookMutation,
   useDeleteBookMutation,
+  useAddUserBookMutation 
 } = booksApi;

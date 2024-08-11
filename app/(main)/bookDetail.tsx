@@ -1,93 +1,118 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { useAddUserBookMutation } from '../redux/booksApi';
+import { supabase } from '@/lib/supabase';
+type RootStackParamList = {
+  BookDetail: { book: any };
+};
 
-interface BookDetailModalProps {
-  visible: boolean;
-  onClose: () => void;
-  book: any;
-  onDelete: (bookId: string) => void;
-}
+type BookDetailRouteProp = RouteProp<RootStackParamList, 'BookDetail'>;
 
-const BookDetailModal: React.FC<BookDetailModalProps> = ({ visible, onClose, book, onDelete }) => {
-  if (!book) return null;
+const BookDetail = () => {
+  const route = useRoute<BookDetailRouteProp>();
+  const navigation = useNavigation();
+  const { book } = route.params;
 
-  const handleDelete = () => {
-    onDelete(book.id);
-    onClose();
+  if (!book || !book.book_id) {
+    alert('Kitap bilgisi bulunamadı.');
+    return null;
+  }
+
+  const [addUserBook, { isLoading }] = useAddUserBookMutation();
+
+  const handleAddBook = async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        alert('Kullanıcı oturumu bulunamadı.');
+        return;
+      }
+
+      const response = await addUserBook({ userId: user.id, bookId: book.book_id });
+      if (response.error) {
+        console.error('Kitap ekleme hatası:', response.error);
+        alert('Kitap eklenemedi. Tekrar deneyin.');
+        return;
+      }
+      alert('Kitap eklendi!');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Kitap ekleme hatası:', error);
+      alert('Kitap eklenemedi. Tekrar deneyin.');
+    }
   };
 
   return (
-    <Modal visible={visible} transparent={true} animationType="slide">
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          {book.coverImage && (
-            <Image source={{ uri: book.coverImage }} style={styles.bookImage} />
-          )}
-          <Text style={styles.bookTitle}>{book.title}</Text>
-          <Text style={styles.bookDetail}>ISBN: {book.ISBN}</Text>
-          <Text style={styles.bookDetail}>Yazar(lar): {book.authors.join(', ')}</Text>
-          <Text style={styles.bookDetail}>Tür: {book.genre}</Text>
-
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-            <Text style={styles.deleteButtonText}>Kitabı Sil</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Kapat</Text>
-          </TouchableOpacity>
-        </View>
+    <ScrollView style={styles.container}>
+      <Image source={{ uri: book.coverimage }} style={styles.bookImage} />
+      <View style={styles.bookInfoContainer}>
+        <Text style={styles.bookTitle}>{book.title}</Text>
+        <Text style={styles.bookAuthor}>Yazarlar: {book.author_names}</Text>
+        <Text style={styles.bookDetail}>ISBN: {book.isbn}</Text>
+        <Text style={styles.bookDetail}>Tür: {book.genre}</Text>
       </View>
-    </Modal>
+      <TouchableOpacity style={styles.addButton} onPress={handleAddBook} disabled={isLoading}>
+        <Text style={styles.addButtonText}>{isLoading ? 'Ekleniyor...' : 'Kitabı Ekle'}</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
-export default BookDetailModal;
+export default BookDetail;
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    padding: 20,
     backgroundColor: '#fff',
-    borderRadius: 10,
-    alignItems: 'center',
   },
   bookImage: {
-    width: 100,
-    height: 150,
+    width: '100%',
+    height: 300,
+    resizeMode: 'contain',
     marginBottom: 20,
   },
+  bookInfoContainer: {
+    padding: 20,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 10,
+    marginVertical: 20,
+    marginHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+  },
   bookTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
+    color: '#333',
     marginBottom: 10,
   },
-  bookDetail: {
-    fontSize: 16,
+  bookAuthor: {
+    fontSize: 18,
+    color: '#888',
     marginBottom: 5,
   },
-  deleteButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#ff6b6b',
-    borderRadius: 5,
+  bookDetail: {
+    fontSize: 18,
+    color: '#888',
+    marginBottom: 5,
   },
-  deleteButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  closeButton: {
-    marginTop: 10,
-    padding: 10,
+  addButton: {
     backgroundColor: '#6495ED',
-    borderRadius: 5,
+    padding: 15,
+    borderRadius: 50,
+    alignItems: 'center',
+    marginHorizontal: 15,
+    marginBottom: 20,
+    elevation: 5,
   },
-  closeButtonText: {
+  addButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
