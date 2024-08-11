@@ -34,7 +34,7 @@ const Books = () => {
   };
 
   const renderItem = ({ item }: { item: any }) => (
-    <Pressable onPress={() => navigation.navigate('bookDetail', { book: item })}>
+<Pressable onPress={() => navigation.navigate('bookDetail', { book: item, fromScreen: 'books' })}>
       <View style={styles.bookItem}>
         <Image source={{ uri: item.coverimage }} style={styles.bookImage} />
         <View style={styles.bookInfo}>

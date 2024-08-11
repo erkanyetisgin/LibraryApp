@@ -71,6 +71,19 @@ export const booksApi = createApi({
         method: 'DELETE',
       }),
     }), 
+    myBooks: builder.query({
+      query: (userId) => ({
+        url: 'rpc/get_my_books',
+        method: 'POST',
+        body: { user_id: userId },
+      }),
+    }),
+    deleteMyBook: builder.mutation({
+      query: (id) => ({
+         url: `/usersbooks/${id}`,
+         method: 'DELETE',
+      }),
+   }),
   }),
 });
 
@@ -82,5 +95,7 @@ export const {
   useAddBookAuthorMutation,
   useUpdateBookMutation,
   useDeleteBookMutation,
-  useAddUserBookMutation 
+  useAddUserBookMutation,
+  useMyBooksQuery, 
+  useDeleteMyBookMutation,
 } = booksApi;

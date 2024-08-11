@@ -3,8 +3,9 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'rea
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { useAddUserBookMutation } from '../redux/booksApi';
 import { supabase } from '@/lib/supabase';
+
 type RootStackParamList = {
-  BookDetail: { book: any };
+  BookDetail: { book: any, fromScreen: string }; 
 };
 
 type BookDetailRouteProp = RouteProp<RootStackParamList, 'BookDetail'>;
@@ -12,7 +13,7 @@ type BookDetailRouteProp = RouteProp<RootStackParamList, 'BookDetail'>;
 const BookDetail = () => {
   const route = useRoute<BookDetailRouteProp>();
   const navigation = useNavigation();
-  const { book } = route.params;
+  const { book, fromScreen } = route.params;
 
   if (!book || !book.book_id) {
     alert('Kitap bilgisi bulunamadı.');
@@ -21,7 +22,7 @@ const BookDetail = () => {
 
   const [addUserBook, { isLoading }] = useAddUserBookMutation();
 
-  const handleAddBook = async () => {
+  const handleAddOrRemoveBook = async () => {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
 
@@ -30,17 +31,53 @@ const BookDetail = () => {
         return;
       }
 
-      const response = await addUserBook({ userId: user.id, bookId: book.book_id });
-      if (response.error) {
-        console.error('Kitap ekleme hatası:', response.error);
-        alert('Kitap eklenemedi. Tekrar deneyin.');
-        return;
+      const user_id = user.id;
+      const book_id = book.book_id;
+
+      if (fromScreen === 'books') {
+        const response = await addUserBook({ userId: user_id, bookId: book_id });
+        if (response.error) {
+          console.error('Kitap ekleme hatası:', response.error);
+          alert('Kitap eklenemedi. Tekrar deneyin.');
+          return;
+        }
+        alert('Kitap eklendi!');
+      } else if (fromScreen === 'home') {
+        const { data: records, error: fetchError } = await supabase
+          .from('usersbooks')
+          .select('id')
+          .eq('book_id', book_id)
+          .eq('user_id', user_id);
+    
+        if (fetchError) {
+          console.error('Kitap kaydı bulunamadı:', fetchError.message);
+          return;
+        }
+    
+        if (!records || records.length === 0) {
+          console.error('Kitap kaydı bulunamadı.');
+          return;
+        }
+    
+        const { id } = records[0];
+    
+        const { error: deleteError } = await supabase
+          .from('usersbooks')
+          .delete()
+          .eq('id', id);
+    
+        if (deleteError) {
+          console.error('Kitap silme hatası:', deleteError.message);
+          alert('Kitap kaldırılamadı. Tekrar deneyin.');
+        } else {
+          alert('Kitap kaldırıldı!');
+        }
       }
-      alert('Kitap eklendi!');
+
       navigation.goBack();
     } catch (error) {
-      console.error('Kitap ekleme hatası:', error);
-      alert('Kitap eklenemedi. Tekrar deneyin.');
+      console.error('İşlem hatası:', error);
+      alert('İşlem başarısız. Tekrar deneyin.');
     }
   };
 
@@ -49,13 +86,27 @@ const BookDetail = () => {
       <Image source={{ uri: book.coverimage }} style={styles.bookImage} />
       <View style={styles.bookInfoContainer}>
         <Text style={styles.bookTitle}>{book.title}</Text>
-        <Text style={styles.bookAuthor}>Yazarlar: {book.author_names}</Text>
+        {fromScreen !== 'home' && (
+          <Text style={styles.bookAuthor}>Yazarlar: {book.author_names}</Text>
+        )}
         <Text style={styles.bookDetail}>ISBN: {book.isbn}</Text>
         <Text style={styles.bookDetail}>Tür: {book.genre}</Text>
       </View>
-      <TouchableOpacity style={styles.addButton} onPress={handleAddBook} disabled={isLoading}>
-        <Text style={styles.addButtonText}>{isLoading ? 'Ekleniyor...' : 'Kitabı Ekle'}</Text>
-      </TouchableOpacity>
+      {fromScreen === 'home' && (
+      <TouchableOpacity style={styles.deleteButton} onPress={handleAddOrRemoveBook} disabled={isLoading}>
+      <Text style={styles.addButtonText}>
+        {isLoading ? 'İşlemde...' :'Kitabı Bırak' }
+      </Text>
+    </TouchableOpacity>
+        )}
+      {fromScreen === 'books' && (
+      <TouchableOpacity style={styles.addButton} onPress={handleAddOrRemoveBook} disabled={isLoading}>
+      <Text style={styles.addButtonText}>
+        {isLoading ? 'İşlemde...' :'Kitabı Ekle' }
+      </Text>
+    </TouchableOpacity>
+        )}
+
     </ScrollView>
   );
 };
@@ -103,6 +154,15 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#6495ED',
+    padding: 15,
+    borderRadius: 50,
+    alignItems: 'center',
+    marginHorizontal: 15,
+    marginBottom: 20,
+    elevation: 5,
+  },
+  deleteButton: {
+    backgroundColor: '#c42e0e',
     padding: 15,
     borderRadius: 50,
     alignItems: 'center',
