@@ -14,6 +14,7 @@ const icons = {
     search: Icons.Search,
     filter: Icons.Filter,
     sort : Icons.Sort,
+    edit : Icons.Edit,
 }
 
 interface IconProps {

@@ -39,9 +39,9 @@ const Books = () => {
         <Image source={{ uri: item.coverimage }} style={styles.bookImage} />
         <View style={styles.bookInfo}>
           <Text style={styles.bookTitle}>{item.title}</Text>
-          <Text>Yazar: {item.author_names}</Text>
-          <Text>ISBN: {item.isbn}</Text>
-          <Text>Tür: {item.genre}</Text>
+          <Text style={styles.bookText}>Yazar: {item.author_names}</Text>
+          <Text style={styles.bookText}>ISBN: {item.isbn}</Text>
+          <Text style={styles.bookText}>Tür: {item.genre}</Text>
         </View>
       </View>
     </Pressable>
@@ -144,5 +144,9 @@ const styles = StyleSheet.create({
   bookTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  bookText: {
+    fontSize: 16,
+    
   },
 });
