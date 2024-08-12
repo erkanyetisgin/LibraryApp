@@ -17,11 +17,12 @@ const Profile = () => {
   }
 
   const onLogout = async () => {
-    setAuth(null);
     const { error } = await supabase.auth.signOut();
-
+  
     if (error) {
       Alert.alert('Çıkış Yapılamadı', error.message);
+    } else {
+      setAuth(null);
     }
   };
 
@@ -71,15 +72,20 @@ const Profile = () => {
       <View style={styles.container}>
         <View style={{ gap: 15 }}>
           <View style={styles.avatarContainer}>
-            <Avatar uri={user?.image} size={100} rounded={500} style={{ alignSelf: 'center', marginVertical: 20 }} />
+          <Avatar uri={user?.image} size={100} rounded={500} style={{ alignSelf: 'center', marginVertical: 20 }} />
+
             <Pressable style={styles.editIcon} onPress={editImage}>
               <Icon name='edit' size={24} colors='#000' />
             </Pressable>
           </View>
 
           <View style={{ alignItems: 'center', gap: 4 }}>
-            <Text style={styles.userName}> {user.name}</Text>
-            <Text style={styles.infoText}> {user.email}</Text>
+            <Text style={styles.userName}> 
+               {user?.name ? user.name : 'Kullanıcı Adı Yok'}
+            </Text>
+            <Text style={styles.infoText}> 
+                {user?.email ? user.email : 'Email Yok'}
+            </Text>
           </View>
         </View>
       </View>

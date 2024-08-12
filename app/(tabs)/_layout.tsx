@@ -1,6 +1,5 @@
-import { View, Text } from 'react-native';
 import React from 'react';
-import { Stack, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { TabBar } from '@/components/TabBar';
 import { Provider } from 'react-redux';  
 import { store } from '../redux/store';  
