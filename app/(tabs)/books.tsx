@@ -60,7 +60,7 @@ const Books = () => {
         title="Kitaplar" 
         setSearchQuery={setSearchQuery} 
         showSearch={true}
-        showFilter={true} 
+        showFilter={false} 
         showSort={true} 
         onSortPress={(type: string) => setSortType(type)} 
       />

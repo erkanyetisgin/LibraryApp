@@ -15,7 +15,6 @@ const AddBook = () => {
   const [selectedAuthorId, setSelectedAuthorId] = useState<number | null>(null); 
 
   const { data: authors = [] } = useGetAuthorsQuery({});
-  const { data: books = [] } = useGetBooksQuery({});
   const [addBook, { isLoading, isError }] = useAddBookMutation();
   const [addBookAuthor] = useAddBookAuthorMutation();
   const [deleteBook] = useDeleteBookMutation();

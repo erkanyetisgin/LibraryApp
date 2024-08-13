@@ -4,7 +4,7 @@ import { theme } from '@/constants/theme';
 import Icon from '@/assets/icons';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import BackButton from '@/components/BackButton';
 import { hp, wp } from '@/helpers/common';
 import Input from '@/components/Input';
@@ -18,28 +18,35 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     
 
-    const onSubmit =async () => {
+    const onSubmit = async () => {
         if (!emailRef.current || !passwordRef.current) {
             Alert.alert('Giriş Yapılamadı', 'Lütfen tüm alanları doldurunuz');
             return;
         }
-
+    
         let email = emailRef.current.trim();
         let password = passwordRef.current.trim();
-
+    
         setLoading(true);
-        const {error} = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
-
+    
         setLoading(false);
-
-        console.log(error);
+    
         if (error) {
             Alert.alert('Giriş Yapılamadı', error.message);
+        } else {
+            if (email === 'admin@mail.com') {
+                console.log('admin');
+                router.replace('(admin)/admin' as unknown as Href<string | object>);
+            } else {
+                router.replace('(tabs)/home' as unknown as Href<string | object>);
+            }
         }
     }
+    
 
     return (
         <ScreenWrapper bg='white'>

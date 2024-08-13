@@ -7,15 +7,16 @@ interface HeaderProps {
   title: string;
   setSearchQuery: (query: string) => void;
   onSortPress?: (sortType: string) => void;
+  onFilterChange?: (filterType: 'books' | 'authors') => void;
   showFilter?: boolean;
   showSort?: boolean;
   showSearch?: boolean;
 }
-
 const Header = ({
   title,
   setSearchQuery,
   onSortPress,
+  onFilterChange,
   showSearch = false,
   showFilter = false,
   showSort = false,
@@ -23,6 +24,8 @@ const Header = ({
   const [searchActive, setSearchActive] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
+  const [filterMenuVisible, setFilterMenuVisible] = useState(false);
+  const [filterType, setFilterType] = useState<'books' | 'authors'>('books');
   const slideAnim = useState(new Animated.Value(0))[0];
 
   const handleSearch = (query: string) => {
@@ -47,15 +50,20 @@ const Header = ({
     }).start();
   };
 
+  const toggleFilterMenu = () => {
+    setFilterMenuVisible(!filterMenuVisible);
+  };
+
   const handleSort = (sortType: string) => {
     setSortMenuVisible(false);
     onSortPress && onSortPress(sortType);
   };
 
-  const handleFilter = () => {
-    console.log('Filter Pressed');
-  }
-
+  const handleFilter = (selectedFilterType: 'books' | 'authors') => {
+    setFilterType(selectedFilterType); 
+    setFilterMenuVisible(false);
+    onFilterChange && onFilterChange(selectedFilterType);
+  };
 
 
   return (
@@ -79,9 +87,33 @@ const Header = ({
           </TouchableOpacity>
         )}
         {showFilter && (
-          <TouchableOpacity onPress={handleFilter} style={styles.icon}>
-            <Icon name="filter" size={24} colors="black" />
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity onPress={toggleFilterMenu} style={styles.icon}>
+              <Icon name="filter" size={24} colors="black" />
+            </TouchableOpacity>
+            {filterMenuVisible && (
+              <View style={styles.filterMenu}>
+                <TouchableOpacity
+                  style={[
+                    styles.filterOption,
+                    filterType === 'books' && styles.selectedFilterOption,
+                  ]}
+                  onPress={() => handleFilter('books')}
+                >
+                  <Text>Kitaplar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.filterOption,
+                    filterType === 'authors' && styles.selectedFilterOption,
+                  ]}
+                  onPress={() => handleFilter('authors')}
+                >
+                  <Text>Yazarlar</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </>
         )}
         {showSort && (
           <>
@@ -113,7 +145,6 @@ const Header = ({
 
 export default Header;
 
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -129,7 +160,6 @@ const styles = StyleSheet.create({
     paddingTop: 70,
     zIndex: 2000, 
   },
-
   title: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -177,5 +207,25 @@ const styles = StyleSheet.create({
   },
   sortOption: {
     paddingVertical: 10,
+  },
+  filterMenu: {
+    position: 'absolute',
+    top: hp(5),
+    right: hp(0),
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    zIndex: 3000,
+    padding: 15,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  filterOption: {
+    paddingVertical: 15,
+  },
+  selectedFilterOption: {
+    backgroundColor: '#f0f0f0',
   },
 });
