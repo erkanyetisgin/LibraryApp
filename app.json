@@ -19,8 +19,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.erkanyet.LibraryApp"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -31,14 +30,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "7220f712-3d21-40c2-a9be-57e61c9a0794"
-      }
     }
   }
 }
