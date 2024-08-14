@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Pressable, TouchableOpacity } from 'react-native';
-import Header from '@/components/Header';
-import { hp } from '@/helpers/common';
+import Header from '../../components/Header';
+import { hp } from '../../helpers/common';
 import { useGetAuthorsQuery, useAddAuthorMutation } from '../redux/authorsApi';
 import AuthorBooksModal from './booksList'; 
 import AddAuthorModal from './addAuthor';
