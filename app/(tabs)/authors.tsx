@@ -19,8 +19,16 @@ const Authors = () => {
   const fetchAuthorImages = useCallback(async (authorsList: any[]) => {
     const updatedAuthors = await Promise.all(
       authorsList.map(async (author: any) => {
-        const imageUrl = await fetchAuthorImage(author.name);
-        return { ...author, imageUrl };
+        const response = await fetch(`https://openlibrary.org/search/authors.json?q=${author.name}`);
+        const data = await response.json();
+        
+        if (data.docs && data.docs.length > 0) {
+          const authorOLID = data.docs[0].key.replace('/authors/', '');
+          const imageUrl = `https://covers.openlibrary.org/a/olid/${authorOLID}-S.jpg`;
+          return { ...author, imageUrl };
+        }
+
+        return { ...author, imageUrl: null };
       })
     );
     setAuthors(updatedAuthors);
@@ -45,18 +53,6 @@ const Authors = () => {
     setModalVisible(true);
   };
 
-  const fetchAuthorImage = async (authorName: string) => {
-    const response = await fetch(`https://openlibrary.org/search/authors.json?q=${authorName}`);
-    const data = await response.json();
-    
-    if (data.docs && data.docs.length > 0) {
-      const authorOLID = data.docs[0].key.replace('/authors/', '');
-      return `https://covers.openlibrary.org/a/olid/${authorOLID}-S.jpg`;
-    }
-  
-    return null;
-  };
-  
   const renderItem = ({ item }: { item: any }) => (
     <Pressable
       onPress={() => handleAuthorPress(item)}
