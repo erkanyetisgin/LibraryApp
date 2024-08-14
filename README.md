@@ -33,14 +33,15 @@ Bu komut, package.json dosyasında belirtilen tüm bağımlılıkları indirir v
 
 ### 3. Çevre Değişkenlerini Ayarlayın
 
-Projenin düzgün bir şekilde çalışabilmesi için Supabase bağlantı bilgilerinin ayarlanması gerekmektedir.
-Bu bilgiler constants/index.ts dosyasına eklenmelidir. Örnek bir yapılandırma aşağıda verilmiştir:
+Projenin düzgün bir şekilde çalışabilmesi için Supabase bağlantı bilgilerinin ayarlanması gerekmektedir. Bu bilgiler .env dosyasına eklenmelidir. Örnek bir yapılandırma aşağıda verilmiştir:
+
+.env dosyasına ekleyin:
 
 export const supabaseUrl = 'https://your-supabase-url';
 export const supabaseAnonKey = 'your-supabase-anon-key';
 export const baseUrl = 'https://your-supabase-url/rest/v1/';
 
-Bu dosya .gitignore içinde yer aldığı için, bu bilgilerin güvenliğini sağlamak amacıyla bir çevre değişkeni dosyasında saklanması önerilir.
+Bu dosya .gitignore içinde yer almalıdır, böylece bu bilgiler güvende kalır.
 
 ### 4. Uygulamayı Başlatın
 

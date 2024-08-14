@@ -6,12 +6,16 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "helpers/common.js", "contexts/AuthContext.js"  ]
+    "expo-env.d.ts",
+    "helpers/common.js",
+    "contexts/AuthContext.js",
+    "types/**/*.d.ts"
+  ]
 }
