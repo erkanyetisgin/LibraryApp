@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.erkanyetisgin.LibraryApp"
+      "package": "com.erkanyet.LibraryApp"
     },
     "web": {
       "bundler": "metro",
@@ -37,7 +37,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "8feded31-8251-40e2-971e-dbf7430e5c2c"
+        "projectId": "7220f712-3d21-40c2-a9be-57e61c9a0794"
       }
     }
   }
