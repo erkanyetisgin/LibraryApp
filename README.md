@@ -1,50 +1,53 @@
-# Welcome to your Expo app 👋
+# LibraryApp
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+LibraryApp, bir kütüphane uygulamasıdır. React Native, TypeScript, Expo ve Redux Toolkit (RTK) Query gibi teknolojiler kullanılarak geliştirilmiştir. Bu uygulama, kitapları yönetmenize, arama yapmanıza ve kitap detaylarını görüntülemenize olanak tanır.
 
-## Get started
+## Özellikler
 
-1. Install dependencies
+- **Kitap Yönetimi:** Kitap ekleme, düzenleme ve silme işlemleri.
+- **Arama ve Filtreleme:** Kitap adı, ISBN numarası ve yazar adı ile arama yapabilme.
+- **Kitap Listesi ve Detay Görüntüleme:** Kitapları liste halinde görüntüleme ve her bir kitabın detay bilgilerine erişim.
+- **Kullanıcı Giriş ve Yetkilendirme:** Standart kullanıcılar ve yöneticiler için yetkilendirme mekanizması.
 
-   ```bash
-   npm install
-   ```
+## Teknolojiler
 
-2. Start the app
+- **React Native**
+- **TypeScript**
+- **Expo**
+- **Redux Toolkit (RTK) Query**
+- **Supabase**
 
-   ```bash
-    npx expo start
-   ```
+## Kurulum
 
-In the output, you'll find options to open the app in a
+Projenizi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 1. Depoyu Klonlayın
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+git clone https://github.com/erkanyetisgin/LibraryApp.git
+cd LibraryApp
 
-## Get a fresh project
+### 2. Gerekli Paketleri Yükleyin
 
-When you're ready, run:
+Proje dizinine girdikten sonra, uygulamanın bağımlılıklarını yüklemek için npm install komutunu çalıştırın.
+Bu komut, package.json dosyasında belirtilen tüm bağımlılıkları indirir ve projenizin çalışması için gerekli olan modülleri kurar.
 
-```bash
-npm run reset-project
-```
+### 3. Çevre Değişkenlerini Ayarlayın
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Projenin düzgün bir şekilde çalışabilmesi için Supabase bağlantı bilgilerinin ayarlanması gerekmektedir.
+Bu bilgiler constants/index.ts dosyasına eklenmelidir. Örnek bir yapılandırma aşağıda verilmiştir:
 
-## Learn more
+export const supabaseUrl = 'https://your-supabase-url';
+export const supabaseAnonKey = 'your-supabase-anon-key';
+export const baseUrl = 'https://your-supabase-url/rest/v1/';
 
-To learn more about developing your project with Expo, look at the following resources:
+Bu dosya .gitignore içinde yer aldığı için, bu bilgilerin güvenliğini sağlamak amacıyla bir çevre değişkeni dosyasında saklanması önerilir.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 4. Uygulamayı Başlatın
 
-## Join the community
+Uygulamayı başlatmak için, proje dizininde aşağıdaki komutu çalıştırın:
 
-Join our community of developers creating universal apps.
+bash
+Kodu kopyala
+npx expo start
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Bu komut, Expo geliştirici aracını başlatarak uygulamanızı bir simülatörde veya fiziksel bir cihazda test etmenizi sağlar.
